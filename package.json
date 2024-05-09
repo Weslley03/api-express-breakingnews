@@ -1,0 +1,12 @@
+{
+  "name": "mernstack",
+  "version": "1.0.0",
+  "description": "API for SPA Break News",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "keywords": [],
+  "author": "oweslley",
+  "license": "ISC"
+}
