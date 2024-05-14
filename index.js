@@ -1,9 +1,11 @@
 const express = require('express')
 const app = express()
 const userRoute = require('./src/routes/user.route')
+const port = 3000
 
-app.use('/soma', userRoute)
+app.use(express.json())
+app.use('/users', userRoute)
 
-app.listen(3000, () => {
-    console.log('servidor rodando')
+app.listen(port, () => {
+    console.log('server running')
 })
