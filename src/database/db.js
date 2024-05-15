@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose"
 
 const connetcDatabase = () => {
   console.log("conectando.. ");
@@ -11,4 +11,4 @@ const connetcDatabase = () => {
     .catch((err) => console.log(err));
 }
 
-module.exports = connetcDatabase 
+export default connetcDatabase 

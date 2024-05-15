@@ -1,6 +1,7 @@
 {
   "name": "mernstack",
   "version": "1.0.0",
+  "type": "module",
   "description": "API for SPA Break News",
   "main": "index.js",
   "scripts": {

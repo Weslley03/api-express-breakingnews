@@ -1,5 +1,4 @@
-const { json } = require("express");
-const userService = require("../services/user.service");
+import userService from "../services/user.service.js"
 
 const create = async (req, res) => {
   try {
@@ -89,4 +88,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { create, findAll, findById, update, remove };
+export default { create, findAll, findById, update, remove };
