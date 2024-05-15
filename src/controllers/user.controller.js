@@ -1,6 +1,5 @@
 const { json } = require("express");
 const userService = require("../services/user.service");
-const mongoose = require("mongoose");
 
 const create = async (req, res) => {
   const { name, userName, email, password, avatar, background } = req.body;
@@ -38,9 +37,8 @@ const findAll = async (req, res) => {
 };
 
 const findById = async (req, res) => {
-  const id = req.params.id;
-  const userPorId = await userService.GetByIdService(id);
-  res.send(userPorId);
+  const user = req.user
+  res.send(user);
 };
 
 const update = async (req, res) => {
@@ -50,8 +48,8 @@ const update = async (req, res) => {
     res.status(400).send({ message: "necessario alterar ao menos um campo" });
   }
 
-  const id = req.params.id;
-  let user = await userService.GetByIdService(id);
+  const { id, user } = req
+  
   await userService.updateService(
     id,
     name,
@@ -65,8 +63,8 @@ const update = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  const id = req.params.id;
-  const userPorId = await userService.GetByIdService(id);
+  const id = req.id;
+  const user = req.user
   await userService.deleteService(id);
   res.status(200).send({ message: "usuario foi com Deus" });
 };

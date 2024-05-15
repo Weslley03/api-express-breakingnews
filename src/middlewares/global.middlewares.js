@@ -13,12 +13,14 @@ const validId = (req, res, next) => {
 const validUser = async (req, res, next) => {
   const id = req.params.id;
   const user = await userService.GetByIdService(id);
-
   if (!user) {
-    res.status(400).send({ message: "digita essa porra desse ID certo" });
+    return res.status(400).send({ message: "digita essa porra desse ID certo" });
   }
 
+  req.id = id
+  req.user = user
+  
   next();
-};
+};  
 
 module.exports = { validId, validUser };
