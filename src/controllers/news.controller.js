@@ -2,16 +2,29 @@ import { createService, findAllService } from "../services/news.service.js";
 
 export const create = async (req, res) => {
   try {
-    const { title, text, banner } = req.body;
+    const { authorization } = req.headers
+    if(!authorization) {
+        return res.status(404).send('erro porra')
+    }
+    const parts = authorization.split(" ")
+    const [ schema, token ] = parts
+    if(parts.length !== 2) {
+        return res.status(404).send('erro porra')
+    }
+    if(schema !== 'Bearer') {
+        return res.status(404).send('erro porra')
+    }
 
+    const { title, text, banner } = req.body;
     if (!title || !text || !banner) {
       res.status(500).send({ message: "existem dados faltantes" });
     }
+    
     await createService({
       title,
       text,
       banner,
-      id: "objectIdFake",
+      user: {_id: '66450ee13deecb4458668803'},
     });
 
     res.send("criação de post");
