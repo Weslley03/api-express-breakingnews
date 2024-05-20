@@ -1,4 +1,4 @@
-import { createService, findAllService } from "../services/news.service.js";
+import { createService, findAllService, countNews } from "../services/news.service.js";
 
 export const create = async (req, res) => {
   try {
@@ -23,11 +23,48 @@ export const create = async (req, res) => {
 
 export const findAll = async (req, res) => {
   try {
-    const news = await findAllService();
+    let { limit, offset } = req.query
+    limit = Number(limit)
+    offset = Number(offset) //onde eu começo 'skip'
+
+    if(!limit) {
+      limit = 5
+    }
+    if(!offset) {
+      offset = 0
+    }
+
+    const news = await findAllService(offset, limit);
+    const total = await countNews()
+    const currentUrl = req.baseUrl
+    
+    const next = offset + limit
+    const nextUrl = next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null
+    
+    const previous = offset * limit < 0 ? null : offset - limit
+    const previousUrl = previous != null ? `${currentUrl}?limi=${limit}?offset=${previous}` : null
+
     if(news.length === 0) {
         res.status(404).send({ message: 'não tem noticia véi' });
     }
-    res.send(news);
+    res.send({
+      nextUrl, 
+      previousUrl,
+      limit,
+      offset,
+      total,
+      results: news.map((newItem) => ({
+        id: newItem._id,
+        title: newItem.title,
+        text: newItem.text,
+        banner: newItem.banner,
+        likes: newItem.likes,
+        comments: newItem.comments,
+        name: newItem.user.name,
+        userName: newItem.user.username,
+        userAvatar: newItem.user.avatar
+      }))
+    });
   } catch (err) {
     res.status(500).send({ message: err.message });
     console.log("foi pro erro");
