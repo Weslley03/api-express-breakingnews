@@ -1,4 +1,9 @@
-import { createService, findAllService, countNews } from "../services/news.service.js";
+import {
+  createService,
+  findAllService,
+  countNewsService,
+  topNewsService,
+} from "../services/news.service.js";
 
 export const create = async (req, res) => {
   try {
@@ -6,12 +11,12 @@ export const create = async (req, res) => {
     if (!title || !text || !banner) {
       res.status(500).send({ message: "existem dados faltantes" });
     }
-    
+
     await createService({
       title,
       text,
       banner,
-      user: req.userId
+      user: req.userId,
     });
 
     res.send("criação de post");
@@ -23,32 +28,36 @@ export const create = async (req, res) => {
 
 export const findAll = async (req, res) => {
   try {
-    let { limit, offset } = req.query
-    limit = Number(limit)
-    offset = Number(offset) //onde eu começo 'skip'
+    let { limit, offset } = req.query;
+    limit = Number(limit);
+    offset = Number(offset); //onde eu começo 'skip'
 
-    if(!limit) {
-      limit = 5
+    if (!limit) {
+      limit = 5;
     }
-    if(!offset) {
-      offset = 0
+    if (!offset) {
+      offset = 0;
     }
 
     const news = await findAllService(offset, limit);
-    const total = await countNews()
-    const currentUrl = req.baseUrl
-    
-    const next = offset + limit
-    const nextUrl = next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null
-    
-    const previous = offset * limit < 0 ? null : offset - limit
-    const previousUrl = previous != null ? `${currentUrl}?limi=${limit}?offset=${previous}` : null
+    const total = await countNewsService();
+    const currentUrl = req.baseUrl;
 
-    if(news.length === 0) {
-        res.status(404).send({ message: 'não tem noticia véi' });
+    const next = offset + limit;
+    const nextUrl =
+      next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null;
+
+    const previous = offset * limit < 0 ? null : offset - limit;
+    const previousUrl =
+      previous != null
+        ? `${currentUrl}?limi=${limit}?offset=${previous}`
+        : null;
+
+    if (news.length === 0) {
+      res.status(404).send({ message: "não tem noticia véi" });
     }
     res.send({
-      nextUrl, 
+      nextUrl,
       previousUrl,
       limit,
       offset,
@@ -62,11 +71,37 @@ export const findAll = async (req, res) => {
         comments: newItem.comments,
         name: newItem.user.name,
         userName: newItem.user.username,
-        userAvatar: newItem.user.avatar
-      }))
+        userAvatar: newItem.user.avatar,
+      })),
     });
   } catch (err) {
     res.status(500).send({ message: err.message });
     console.log("foi pro erro");
+  }
+};
+
+export const topNews = async (req, res) => {
+  try {
+    const news = await topNewsService();
+
+    if (!news) {
+      res.status(404).send({ message: "você é o problema do sistema" });
+    }
+
+    res.send({
+      news: {
+        id: news._id,
+        title: news.title,
+        text: news.text,
+        banner: news.banner,
+        likes: news.likes,
+        comments: news.comments,
+        name: news.user.name,
+        userName: news.user.username,
+        userAvatar: news.user.avatar,
+      },
+    });
+  } catch (err) {
+    res.status(404).send({ message: "você é o problema do sistema" });
   }
 };

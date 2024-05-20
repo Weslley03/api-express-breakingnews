@@ -1,7 +1,8 @@
 import News from "../models/News.js"
 
-export const countNews = () => News.countDocuments()
+export const countNewsService = () => News.countDocuments()
 export const createService = (body) => News.create(body); 
+export const topNewsService = () => News.findOne().sort({_id: -1}).populate('user')
 export const findAllService = (offset, limit) => News.find().sort({_id: -1}).skip(offset).limit(limit).populate('user')
 /*xxxxx.find()
 .sort({_id: -1}) nesse caso, trás os dados de trás pra frente, conforme criação dos ID (_id)
