@@ -4,6 +4,7 @@ import {
   countNewsService,
   topNewsService,
   findByIdService,
+  findByTitleService,
 } from "../services/news.service.js";
 
 export const create = async (req, res) => {
@@ -110,8 +111,8 @@ export const topNews = async (req, res) => {
 export const findById = async (req, res) => {
   try {
     const id = req.params.id;
-    const noticia = await findByIdService(id)
-    if(!noticia) {  
+    const noticia = await findByIdService(id);
+    if (!noticia) {
       res.status(404).send({ message: "essa noticia nãõ existe" });
     }
     res.status(200).send({
@@ -126,7 +127,34 @@ export const findById = async (req, res) => {
         userName: noticia.user.username,
         userAvatar: noticia.user.avatar,
       },
-    })
+    });
+  } catch (err) {
+    res.status(404).send({ message: "você é o problema do sistema" });
+  }
+};
+
+export const findByTitle = async (req, res) => {
+  try {
+    const { title } = req.query
+    const news = await findByTitleService(title);
+    console.log(news.name)
+
+    if (news.length === 0) {
+      res.status(404).send({ message: "você é o problema do sistema" });
+    }
+    res.status(200).send(
+      news.map((newItem) => ({
+        id: newItem._id,
+        title: newItem.title,
+        text: newItem.text,
+        banner: newItem.banner,
+        likes: newItem.likes,
+        comments: newItem.comments,
+        name: newItem.user.name,
+        userName: newItem.user.username,
+        userAvatar: newItem.user.avatar,
+      })),
+    )
   } catch (err) {
     res.status(404).send({ message: "você é o problema do sistema" });
   }
