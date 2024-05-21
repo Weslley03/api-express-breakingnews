@@ -8,7 +8,7 @@ export const authMiddleware = (req, res, next) => {
   try {
     const { authorization } = req.headers;
     if (!authorization) {
-      return res.status(404).send("erro porra");
+      return res.status(404).send("erro porra, cade a auth");
     }
     const parts = authorization.split(" ");
     const [schema, token] = parts;
@@ -16,7 +16,7 @@ export const authMiddleware = (req, res, next) => {
       return res.status(404).send("erro porra");
     }
     if (schema !== "Bearer") {
-      return res.status(404).send("erro porra");
+      return res.status(404).send("erro porra, token inesxisnte");
     }
 
     jwt.verify(token, process.env.SECRET_JWT, async (err, decoded) => {
@@ -30,7 +30,7 @@ export const authMiddleware = (req, res, next) => {
         return res.status(401).send({ msg: "user or id invalids" });
       }
       req.userId = user.id
-      console.log(user.name)
+      console.log(`${user.name} logado com`)
 
       return next();
     });

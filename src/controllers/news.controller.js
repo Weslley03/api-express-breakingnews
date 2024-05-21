@@ -5,6 +5,7 @@ import {
   topNewsService,
   findByIdService,
   findByTitleService,
+  findByUserService,
 } from "../services/news.service.js";
 
 export const create = async (req, res) => {
@@ -135,9 +136,9 @@ export const findById = async (req, res) => {
 
 export const findByTitle = async (req, res) => {
   try {
-    const { title } = req.query
+    const { title } = req.query;
     const news = await findByTitleService(title);
-    console.log(news.name)
+    console.log(news.name);
 
     if (news.length === 0) {
       res.status(404).send({ message: "você é o problema do sistema" });
@@ -153,8 +154,35 @@ export const findByTitle = async (req, res) => {
         name: newItem.user.name,
         userName: newItem.user.username,
         userAvatar: newItem.user.avatar,
-      })),
-    )
+      }))
+    );
+  } catch (err) {
+    res.status(404).send({ message: "você é o problema do sistema" });
+  }
+};
+
+export const findByUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+    console.log(userId);
+    const news = await findByUserService(userId);
+    if (!news) {
+      res.status(404).send({ message: "você é o problema do sistema" });
+    } else {
+      res.status(200).send(
+        news.map((newItem) => ({
+          id: newItem._id,
+          title: newItem.title,
+          text: newItem.text,
+          banner: newItem.banner,
+          likes: newItem.likes,
+          comments: newItem.comments,
+          name: newItem.user.name,
+          userName: newItem.user.username,
+          userAvatar: newItem.user.avatar,
+        }))
+      );
+    }
   } catch (err) {
     res.status(404).send({ message: "você é o problema do sistema" });
   }
