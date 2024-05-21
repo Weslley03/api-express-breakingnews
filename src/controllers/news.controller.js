@@ -3,6 +3,7 @@ import {
   findAllService,
   countNewsService,
   topNewsService,
+  findByIdService,
 } from "../services/news.service.js";
 
 export const create = async (req, res) => {
@@ -101,6 +102,31 @@ export const topNews = async (req, res) => {
         userAvatar: news.user.avatar,
       },
     });
+  } catch (err) {
+    res.status(404).send({ message: "você é o problema do sistema" });
+  }
+};
+
+export const findById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const noticia = await findByIdService(id)
+    if(!noticia) {  
+      res.status(404).send({ message: "essa noticia nãõ existe" });
+    }
+    res.status(200).send({
+      noticia: {
+        id: noticia._id,
+        title: noticia.title,
+        text: noticia.text,
+        banner: noticia.banner,
+        likes: noticia.likes,
+        comments: noticia.comments,
+        name: noticia.user.name,
+        userName: noticia.user.username,
+        userAvatar: noticia.user.avatar,
+      },
+    })
   } catch (err) {
     res.status(404).send({ message: "você é o problema do sistema" });
   }
