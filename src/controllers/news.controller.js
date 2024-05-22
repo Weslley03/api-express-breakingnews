@@ -8,6 +8,8 @@ import {
   findByTitleService,
   findByUserService,
   deleteByIdService,
+  likeNewsService,
+  deleteLikeNewsService
 } from "../services/news.service.js";
 
 export const create = async (req, res) => {
@@ -224,7 +226,7 @@ export const update = async (req, res) => {
 
 export const deleteById = async (req, res) => {
   try {
-    const newsId = req.params.id
+  const newsId = req.params.id
   const userId = req.userId
   const news = await findByIdService(newsId)
 
@@ -237,5 +239,23 @@ export const deleteById = async (req, res) => {
   }catch(err) {
     console.error('erro ao EXCLUIR essa notícia:', err); // Log do erro para depuração
     return res.status(500).send({ msg: `erro ao EXCLUIR notícia: ${err.message}` });
+  }
+}
+
+export const likeNews =  async (req, res) => {
+  try{
+    const newId = req.params.id
+    const userLiked = req.userId
+    const newsLiked = await likeNewsService(newId, userLiked)
+
+    if(!newsLiked) {
+      await deleteLikeNewsService(newId, userLiked)
+      return res.status(200).send({ msg: `post DESCURTIDO com sucesso` });
+    } 
+    
+    res.status(200).send({ msg: `post CURTIDO com sucesso` });
+  }catch(err){
+    console.error('error', err); // Log do erro para depuração
+    return res.status(500).send({ msg: `error: ${err.message}` });
   }
 }

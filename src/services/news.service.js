@@ -14,6 +14,26 @@ export const topNewsService = () => News.findOne().sort({_id: -1}).populate('use
 export const findByIdService = (id) => News.findById(id).populate('user')
 export const findByUserService = (userId) => News.find({user: userId}).sort({_id: -1}).sort({_id: -1}).populate('user')
 
+export const likeNewsService = (newsId, userLiked) => News.findOneAndUpdate(
+    //vou filtar por id da noticia, no caso esse que vem em parametro
+    {_id: newsId, 'likes.userLiked': {$nin: [userLiked]}}, //dentro da noticia, entrar no campo likes, nesse campo, procurar userLiked
+    //$nin verifica se esse userLiked é o mesmo que [userLiked]
+    {$push: //cifrão alega query e solta query dentro do banco
+        {likes: //vai haver um PUSH dentro do likes, criamos esse no model Newss
+            {userLiked, created: new Date()} //dentro de likes vamos colocar o id do usuario q curtiu e a data que curtiu
+        }
+    }
+)
+
+export const deleteLikeNewsService = (newId, userLiked) => News.findOneAndUpdate(
+    {_id: newId},
+    {$pull: 
+        {likes: 
+            {userLiked}
+        }
+    }
+)
+
 export const findByTitleService = (title) => News.find({
     title: {$regex: `${title || ''}`, $options: 'i'} //$regex vai servir pra especificar os parametros de busco, 'contenha o title'
 }).sort({_id: -1}).populate('user')
