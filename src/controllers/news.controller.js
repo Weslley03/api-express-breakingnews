@@ -7,6 +7,7 @@ import {
   findByIdService,
   findByTitleService,
   findByUserService,
+  deleteByIdService,
 } from "../services/news.service.js";
 
 export const create = async (req, res) => {
@@ -115,7 +116,7 @@ export const findById = async (req, res) => {
     const id = req.params.id;
     const noticia = await findByIdService(id);
     if (!noticia) {
-      res.status(404).send({ message: "essa noticia nãõ existe" });
+      return res.status(404).send({ message: "essa noticia nãõ existe" });
     }
     res.status(200).send({
       noticia: {
@@ -195,8 +196,11 @@ export const update = async (req, res) => {
     const newsId = req.params.id
     const { title, text, banner } = req.body
     
-    const news = await findByIdService(newsId)
+    if (!title && !text && !banner) {
+      res.status(500).send({ message: "existem dados faltantes" });
+    }
 
+    const news = await findByIdService(newsId)
     if (!news) {
       return res.status(404).send({ msg: "Notícia não encontrada" });
     }
@@ -215,5 +219,23 @@ export const update = async (req, res) => {
   }catch (err) {
     console.error('Erro ao atualizar notícia:', err); // Log do erro para depuração
     return res.status(500).send({ msg: `Erro ao atualizar notícia: ${err.message}` });
+  }
+}
+
+export const deleteById = async (req, res) => {
+  try {
+    const newsId = req.params.id
+  const userId = req.userId
+  const news = await findByIdService(newsId)
+
+  if(news.user._id != userId) {
+    return res.status(404).send({msg: 'você não tem permissão para excluir esse usuário'})
+  }
+
+  await deleteByIdService(newsId)
+  res.send({msg: 'noticia excluído com sucesso'})
+  }catch(err) {
+    console.error('erro ao EXCLUIR essa notícia:', err); // Log do erro para depuração
+    return res.status(500).send({ msg: `erro ao EXCLUIR notícia: ${err.message}` });
   }
 }
