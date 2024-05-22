@@ -2,6 +2,13 @@ import News from "../models/News.js"
 
 export const countNewsService = () => News.countDocuments()
 export const createService = (body) => News.create(body); 
+
+export const updateService = (id, title, text, banner) => News.findOneAndUpdate(
+    { _id: id }, 
+    { title, text, banner },
+    { rawResult: true }
+) 
+
 export const topNewsService = () => News.findOne().sort({_id: -1}).populate('user')
 export const findByIdService = (id) => News.findById(id).populate('user')
 export const findByUserService = (userId) => News.find({user: userId}).sort({_id: -1}).sort({_id: -1}).populate('user')
@@ -17,5 +24,3 @@ export const findAllService = (offset, limit) => News.find().sort({_id: -1}).ski
 .limit(limit) quantidade de amostra
 .populate('user') através do ID, busca o USER e mostra também na busca 'relacionamento de tabela'
 */
-
-

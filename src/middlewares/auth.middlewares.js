@@ -30,7 +30,7 @@ export const authMiddleware = (req, res, next) => {
         return res.status(401).send({ msg: "user or id invalids" });
       }
       req.userId = user.id
-      console.log(`${user.name} logado com`)
+      console.log(`${user.name} logado`)
 
       return next();
     });

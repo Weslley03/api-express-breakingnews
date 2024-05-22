@@ -1,5 +1,6 @@
 import {
   createService,
+  updateService,
   findAllService,
   countNewsService,
   topNewsService,
@@ -187,3 +188,27 @@ export const findByUser = async (req, res) => {
     res.status(404).send({ message: "você é o problema do sistema" });
   }
 };
+
+export const update = async (req, res) => {
+  try {
+    const userId = req.userId
+    const newsId = req.params.id
+    const { title, text, banner } = req.body
+    
+    const news = await findById(newsId)
+    
+    if(news.user._id != userId) {
+      return res.status(404).send({msg: "você não tem permissão para mudar essa noticia"})
+    }
+    
+    console.log(news.user._id)
+    console.log(userId)
+    console.log(title, text, banner)
+
+    await updateService(newsId, title, text, banner)
+    return res.status(200).send('noticia atualizada com sucesso')
+    
+  }catch(err) {
+    res.status(404).send(`você é o problema do sistema ${err}`);
+  }
+}
