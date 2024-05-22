@@ -195,7 +195,11 @@ export const update = async (req, res) => {
     const newsId = req.params.id
     const { title, text, banner } = req.body
     
-    const news = await findById(newsId)
+    const news = await findByIdService(newsId)
+
+    if (!news) {
+      return res.status(404).send({ msg: "Notícia não encontrada" });
+    }
     
     if(news.user._id != userId) {
       return res.status(404).send({msg: "você não tem permissão para mudar essa noticia"})
@@ -206,9 +210,10 @@ export const update = async (req, res) => {
     console.log(title, text, banner)
 
     await updateService(newsId, title, text, banner)
-    return res.status(200).send('noticia atualizada com sucesso')
+    return res.status(200).send({msg: 'noticia atualizada com sucesso'})
     
-  }catch(err) {
-    res.status(404).send(`você é o problema do sistema ${err}`);
+  }catch (err) {
+    console.error('Erro ao atualizar notícia:', err); // Log do erro para depuração
+    return res.status(500).send({ msg: `Erro ao atualizar notícia: ${err.message}` });
   }
 }
