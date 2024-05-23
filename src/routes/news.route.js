@@ -10,6 +10,7 @@ import {
   findByUser,
   likeNews,
   addComment,
+  removeComment
 } from "../controllers/news.controller.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 const route = express.Router();
@@ -24,5 +25,6 @@ route.patch("/:id", authMiddleware, update);
 route.delete("/:id", authMiddleware, deleteById);
 route.patch("/like/:id", authMiddleware, likeNews);
 route.patch("/comment/:id", authMiddleware, addComment);
+route.patch("/comment/:idNews/idComment", authMiddleware, removeComment);
 
 export default route;

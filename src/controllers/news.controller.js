@@ -11,6 +11,7 @@ import {
   likeNewsService,
   deleteLikeNewsService,
   addCommentService,
+  removeCommentService
 } from "../services/news.service.js";
 
 export const create = async (req, res) => {
@@ -272,7 +273,7 @@ export const addComment = async (req, res) => {
   try {
     const userId = req.userId;
     const newsId = req.params.id;
-    const comment = req.body;
+    const { comment } = req.body;
 
     if (!comment) {
       res.status(400).send({ msg: "existem dados faltantes" });
@@ -285,3 +286,17 @@ export const addComment = async (req, res) => {
     return res.status(500).send({ msg: `error: ${err.message}` });  
   }
 };
+
+export const removeComment = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const idNews = req.params.idNews;
+    const idComment = req.params.idComment;
+
+    await removeCommentService(idNews, idComment, userId)
+    res.status(200).send({ msg: `comment removido com sucesso` });
+  }catch(err) {
+    console.error("error", err); // Log do erro para depuração
+    return res.status(500).send({ msg: `houve um erro, caiu no catch: ${err.message}` }); 
+  }
+}
