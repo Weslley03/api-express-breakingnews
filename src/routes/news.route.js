@@ -20,11 +20,12 @@ route.get("/", findAll);
 route.get("/top", topNews);
 route.get("/search", findByTitle);
 route.get("/byUser", authMiddleware, findByUser);
+route.patch("/comment/:idNews/:commentId", authMiddleware, removeComment);
 route.get("/:id", authMiddleware, findById);
 route.patch("/:id", authMiddleware, update);
 route.delete("/:id", authMiddleware, deleteById);
 route.patch("/like/:id", authMiddleware, likeNews);
 route.patch("/comment/:id", authMiddleware, addComment);
-route.patch("/comment/:idNews/idComment", authMiddleware, removeComment);
+
 
 export default route;

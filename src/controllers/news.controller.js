@@ -291,12 +291,14 @@ export const removeComment = async (req, res) => {
   try {
     const userId = req.userId;
     const idNews = req.params.idNews;
-    const idComment = req.params.idComment;
+    const commentId = req.params.commentId;
 
-    await removeCommentService(idNews, idComment, userId)
+    const remover = await removeCommentService(idNews, commentId, userId)
+    console.log(remover)
+
     res.status(200).send({ msg: `comment removido com sucesso` });
   }catch(err) {
     console.error("error", err); // Log do erro para depuração
-    return res.status(500).send({ msg: `houve um erro, caiu no catch: ${err.message}` }); 
+    return res.status(404).send({ msg: `houve um erro, caiu no catch: ${err.message}` }); 
   }
 }
