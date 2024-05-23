@@ -9,7 +9,8 @@ import {
   findByUserService,
   deleteByIdService,
   likeNewsService,
-  deleteLikeNewsService
+  deleteLikeNewsService,
+  addCommentService,
 } from "../services/news.service.js";
 
 export const create = async (req, res) => {
@@ -194,68 +195,93 @@ export const findByUser = async (req, res) => {
 
 export const update = async (req, res) => {
   try {
-    const userId = req.userId
-    const newsId = req.params.id
-    const { title, text, banner } = req.body
-    
+    const userId = req.userId;
+    const newsId = req.params.id;
+    const { title, text, banner } = req.body;
+
     if (!title && !text && !banner) {
       res.status(500).send({ message: "existem dados faltantes" });
     }
 
-    const news = await findByIdService(newsId)
+    const news = await findByIdService(newsId);
     if (!news) {
       return res.status(404).send({ msg: "Notícia não encontrada" });
     }
-    
-    if(news.user._id != userId) {
-      return res.status(404).send({msg: "você não tem permissão para mudar essa noticia"})
-    }
-    
-    console.log(news.user._id)
-    console.log(userId)
-    console.log(title, text, banner)
 
-    await updateService(newsId, title, text, banner)
-    return res.status(200).send({msg: 'noticia atualizada com sucesso'})
-    
-  }catch (err) {
-    console.error('Erro ao atualizar notícia:', err); // Log do erro para depuração
-    return res.status(500).send({ msg: `Erro ao atualizar notícia: ${err.message}` });
+    if (news.user._id != userId) {
+      return res
+        .status(404)
+        .send({ msg: "você não tem permissão para mudar essa noticia" });
+    }
+
+    console.log(news.user._id);
+    console.log(userId);
+    console.log(title, text, banner);
+
+    await updateService(newsId, title, text, banner);
+    return res.status(200).send({ msg: "noticia atualizada com sucesso" });
+  } catch (err) {
+    console.error("Erro ao atualizar notícia:", err); // Log do erro para depuração
+    return res
+      .status(500)
+      .send({ msg: `Erro ao atualizar notícia: ${err.message}` });
   }
-}
+};
 
 export const deleteById = async (req, res) => {
   try {
-  const newsId = req.params.id
-  const userId = req.userId
-  const news = await findByIdService(newsId)
+    const newsId = req.params.id;
+    const userId = req.userId;
+    const news = await findByIdService(newsId);
 
-  if(news.user._id != userId) {
-    return res.status(404).send({msg: 'você não tem permissão para excluir esse usuário'})
+    if (news.user._id != userId) {
+      return res
+        .status(404)
+        .send({ msg: "você não tem permissão para excluir esse usuário" });
+    }
+
+    await deleteByIdService(newsId);
+    res.send({ msg: "noticia excluído com sucesso" });
+  } catch (err) {
+    console.error("erro ao EXCLUIR essa notícia:", err); // Log do erro para depuração
+    return res
+      .status(500)
+      .send({ msg: `erro ao EXCLUIR notícia: ${err.message}` });
   }
+};
 
-  await deleteByIdService(newsId)
-  res.send({msg: 'noticia excluído com sucesso'})
-  }catch(err) {
-    console.error('erro ao EXCLUIR essa notícia:', err); // Log do erro para depuração
-    return res.status(500).send({ msg: `erro ao EXCLUIR notícia: ${err.message}` });
-  }
-}
+export const likeNews = async (req, res) => {
+  try {
+    const newId = req.params.id;
+    const userLiked = req.userId;
+    const newsLiked = await likeNewsService(newId, userLiked);
 
-export const likeNews =  async (req, res) => {
-  try{
-    const newId = req.params.id
-    const userLiked = req.userId
-    const newsLiked = await likeNewsService(newId, userLiked)
-
-    if(!newsLiked) {
-      await deleteLikeNewsService(newId, userLiked)
+    if (!newsLiked) {
+      await deleteLikeNewsService(newId, userLiked);
       return res.status(200).send({ msg: `post DESCURTIDO com sucesso` });
-    } 
-    
+    }
+
     res.status(200).send({ msg: `post CURTIDO com sucesso` });
-  }catch(err){
-    console.error('error', err); // Log do erro para depuração
+  } catch (err) {
+    console.error("error", err); // Log do erro para depuração
     return res.status(500).send({ msg: `error: ${err.message}` });
   }
-}
+};
+
+export const addComment = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const newsId = req.params.id;
+    const comment = req.body;
+
+    if (!comment) {
+      res.status(400).send({ msg: "existem dados faltantes" });
+    }
+
+    await addCommentService(newsId, comment, userId);
+    res.send({msg: 'comentario add'})
+  } catch (err) {
+    console.error("error", err); // Log do erro para depuração
+    return res.status(500).send({ msg: `error: ${err.message}` });  
+  }
+};

@@ -45,3 +45,15 @@ export const findAllService = (offset, limit) => News.find().sort({_id: -1}).ski
 .limit(limit) quantidade de amostra
 .populate('user') através do ID, busca o USER e mostra também na busca 'relacionamento de tabela'
 */
+
+export const addCommentService = (newsId, comment, userId) => {
+    const commentId = Math.floor(Date.now() * Math.random()).toString(36)
+    return News.findOneAndUpdate(
+        { _id: newsId },
+        {$push:
+            {comments:
+                {commentId, userId, comment, createdAt: new Date()}
+            }
+        }
+    )
+}
