@@ -1,0 +1,659 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Breaking News API Documentation",
+        "description": "nesta documentação você poderá consultar os endpoints da API e testar todas as rotas disponíveis. necessario cadastro e autenticação.",
+        "contact": {
+            "email": "wesleymoraeswv03@hotmail.com",
+            "number": "44999428194"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local"
+        }
+    ],
+    "paths": {
+        "/users/create": {
+            "post": {
+              "summary": "criar um novo usuario",
+              "description": "rota para criação de usuarios",
+              "tags": ["Users"],
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "examples": {
+                      "Users": {
+                        "value": {
+                          "name": "Weslley",
+                          "username": "oweslley03",
+                          "email": "weslley@gmail.com",
+                          "password": "$2b$10$skaJCcCfQejybZQa88Dt5.QVUEQCodqfcVv4Gh6vX.V4Jg6AkyQd.",
+                          "avatar": "https://avatars.githubusercontent.com/u/83655316?v=4",
+                          "background": "https://i.imgur.com/DGC7IBz.png"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "400": {
+                  "description": "Not Found"
+                },
+                "201": {
+                  "description": "Created",
+                  "content": {
+                    "application/json": {
+                      "schemma": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/users": {
+            "get": {
+              "summary": "pesquisar todos os usuarios em banco",
+              "description": "rota responsável por buscar todos os usuários",
+              "tags": ["Users"],
+              "security": [{ "bearerAuth": [] }],
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/users/{id}": {
+            "get": {
+              "summary": "buscar usuário conforme ID",
+              "description": "rota responsável por buscar usuário por id",
+              "tags": ["Users"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "id",
+                  "type": "string",
+                  "description": "User ID",
+                  "required": true
+                }
+              ],
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/users/{idU}": {
+            "patch": {
+              "summary": "update user por ID",
+              "description": "rota responsável por editar o usuário por id",
+              "tags": ["Users"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "id",
+                  "type": "string",
+                  "description": "User ID",
+                  "required": true
+                }
+              ],
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "examples": {
+                      "Users": {
+                        "value": {
+                          "name": "Ivan"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/auth": {
+            "post": {
+              "summary": "LOGIN no Breaking News",
+              "description": "rota responsável por logar um usuário cadastrado",
+              "tags": ["Auth"],
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "examples": {
+                      "User": {
+                        "value": {
+                          "email": "weslley@gmail.com",
+                          "password": "SENHA"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK"
+                }
+              }
+            }
+          },
+          "/news": {
+            "post": {
+              "summary": "criar uma noticia em banco",
+              "description": "rota responsável pela criação de um novo Post",
+              "tags": ["Post"],
+              "security": [{ "bearerAuth": [] }],
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Post"
+                    },
+                    "examples": {
+                      "Post": {
+                        "value": {
+                          "user": "",
+                          "banner": "bostonwinpacers.jpg",
+                          "title": "BOSTON GANHOU",
+                          "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                          "likes": [],
+                          "comments": []    
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "201": {
+                  "description": "Created",
+                  "content": {
+                    "application/json": {
+                      "schemma": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Post"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/news/getall": {
+            "get": {
+              "summary": "pesqusiar todas as noticias em banco",
+              "description": "rota responsável por buscar todos os posts",
+              "tags": ["Post"],
+              "parameters": [
+                {
+                  "in": "query",
+                  "name": "limit",
+                  "type": "string"
+                },
+                {
+                  "in": "query",
+                  "name": "offset",
+                  "type": "string"
+                }
+              ],
+              "responses": {
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Post"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/news/top": {
+            "get": {
+              "summary": "pesquisar postagem principal",
+              "description": "rota responsável por buscar a postagem principal",
+              "tags": ["Post"],
+              "responses": {
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schemma": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Post"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/news/search": {
+            "get": {
+              "summary": "pesquisar noticia pelo seu titulo",
+              "description": "rota responsável por buscar os posts que correspondem ao título enviado via parâmetros de consulta",
+              "tags": ["Post"],
+              "parameters": [
+                {
+                  "in": "query",
+                  "name": "title",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "responses": {
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Post"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/news/findId/{id}": {
+            "patch": {
+              "summary": "pesquisar post por ID",
+              "description": "rota responsável por buscar post por id",
+              "tags": ["Post"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "id",
+                  "type": "string",
+                  "description": "Post ID",
+                  "required": true
+                }
+              ],
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schemma": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Post"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/news/byUserId": {
+            "get": {
+              "summary": "pesquisar postagens por ID de usuario",
+              "description": "rota responsável por buscar posts por id do usuario logado",
+              "tags": ["Post"],
+              "responses": {
+                "400": {
+                  "description": "Not Found"
+                },
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Post"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/news/upadate/{id}": {
+            "patch": {
+              "summary": "update noticia especifica",
+              "description": "rota responsável por atualizar um Post",
+              "tags": ["Post"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "id",
+                  "type": "string",
+                  "description": "Post ID",
+                  "required": true
+                }
+              ],
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Post"
+                    },
+                    "examples": {
+                      "Post": {
+                        "value": {
+                          "banner": "",
+                          "title": "",
+                          "text": ""
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK",
+                  "content": {
+                    "application/json": {
+                      "schemma": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Post"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/news/{id}": {
+            "delete": {
+              "summary": "delete post",
+              "description": "rota responsável por excluir uma postagem",
+              "tags": ["Post"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "id",
+                  "type": "string",
+                  "description": "Post ID",
+                  "required": true
+                }
+              ],
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK"
+                }
+              }
+            }
+          },
+          "/news/like/{id}": {
+            "patch": {
+              "summary": "curtir post especifico",
+              "description": "rota responsável por curtir uma postagem",
+              "tags": ["Post"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "id",
+                  "type": "string",
+                  "description": "User ID",
+                  "required": true
+                }
+              ],
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK"
+                }
+              }
+            }
+          },
+          "/news/comments/{idNews}": {
+            "patch": {
+              "summary": "comentar uma noticia especifica",
+              "description": "rota responsável para comentar uma postagem",
+              "tags": ["Post"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "idNews",
+                  "type": "string",
+                  "description": "News ID",
+                  "required": true
+                }
+              ],
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK"
+                }
+              }
+            }
+          },
+          "/news/comments/{idNews}/{idComment}": {
+            "patch": {
+              "summary": "excluir um comentario especifico",
+              "description": "rota responsável a excluir um cometario especifico por id",
+              "tags": ["Post"],
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "in": "path",
+                  "name": "idNews",
+                  "type": "string",
+                  "description": "News ID",
+                  "required": true
+                },
+                {
+                    "in": "path",
+                    "name": "idComment",
+                    "type": "string",
+                    "description": "Comment ID",
+                    "required": true
+                }
+              ],
+              "responses": {
+                "401": {
+                  "description": "Unauthorized"
+                },
+                "400": {
+                  "description": "Not Found"
+                },
+                "200": {
+                  "description": "OK"
+                }
+              }
+            }
+          }
+    },
+    "components": {
+        "securitySchemes": {
+          "bearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+          }
+        },
+        "schemas": {
+          "User": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "username": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              },
+              "avatar": {
+                "type": "string"
+              },
+              "background": {
+                "type": "string"
+              }
+            }
+          },
+          "Post": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "string"
+              },
+              "banner": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "likes": {
+                "type": "number"
+              },
+              "comments": {
+                "type": "array"
+              },
+              "createdAt": {
+                "type": "date"
+              }
+            }
+          },
+          "Comment": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }

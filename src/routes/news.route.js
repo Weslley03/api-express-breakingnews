@@ -15,17 +15,16 @@ import {
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 const route = express.Router();
 
-route.post("/", authMiddleware, create);
-route.get("/", findAll);
+route.post("/create", authMiddleware, create);
+route.get("/getall", findAll);
 route.get("/top", topNews);
 route.get("/search", findByTitle);
 route.get("/byUser", authMiddleware, findByUser);
 route.patch("/comment/:idNews/:commentId", authMiddleware, removeComment);
-route.get("/:id", authMiddleware, findById);
-route.patch("/:id", authMiddleware, update);
+route.get("/findId/:id", authMiddleware, findById);
+route.patch("/upadate/:id", authMiddleware, update);
 route.delete("/:id", authMiddleware, deleteById);
 route.patch("/like/:id", authMiddleware, likeNews);
 route.patch("/comment/:id", authMiddleware, addComment);
-
 
 export default route;
