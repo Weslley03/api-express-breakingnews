@@ -294,9 +294,20 @@ export const removeComment = async (req, res) => {
     const commentId = req.params.commentId;
 
     const remover = await removeCommentService(idNews, commentId, userId)
-    console.log(remover)
 
-    res.status(200).send({ msg: `comment removido com sucesso` });
+    const commentFind = remover.comments.find(comments => {
+      return comments.commentId === commentId
+    })
+
+    if(!commentFind){
+      return res.status(404).send({ msg: `o comment não foi encontrado`});
+    }
+
+    if(commentFind.userId !== userId){
+      return res.status(404).send({ msg: `você não pode remover esse comentario`});
+    }
+
+    res.status(200).send({ msg: `comment removido com sucesso`});
   }catch(err) {
     console.error("error", err); // Log do erro para depuração
     return res.status(404).send({ msg: `houve um erro, caiu no catch: ${err.message}` }); 

@@ -58,7 +58,8 @@ export const addCommentService = (newsId, comment, userId) => {
     )
 }
 
-export const removeCommentService = (idNews, commentId, userId) => News.findOneAndUpdate(
+export const removeCommentService = (idNews, commentId, userId) => {
+    return News.findOneAndUpdate(
     { _id: idNews }, 
     { $pull: { comments: {commentId, userId} } } 
-)
+)}
