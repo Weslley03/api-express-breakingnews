@@ -213,7 +213,7 @@
               }
             }
           },
-          "/news": {
+          "/news/create": {
             "post": {
               "summary": "criar uma noticia em banco",
               "description": "rota responsável pela criação de um novo Post",
