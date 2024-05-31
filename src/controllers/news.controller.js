@@ -146,9 +146,6 @@ export const findByTitle = async (req, res) => {
     const news = await findByTitleService(title);
     console.log(news.name);
 
-    if (news.length === 0) {
-      res.status(404).send({ message: "você é o problema do sistema" });
-    }
     res.status(200).send(
       news.map((newItem) => ({
         id: newItem._id,
