@@ -14,8 +14,11 @@ const create = async (req, res) => {
       return res.status(400).send({ message: "ERROR CREATE USER" });
     }
 
+    const token = generateToken(user.id)
+
     res.status(201).send({
       menssage: "user create succesfully",
+      tokenUser: token,
 
       user: {
         id: user._id,
@@ -26,10 +29,6 @@ const create = async (req, res) => {
         background,
       },
     });
-
-    const token = generateToken(user.id)
-
-    return token;
 
   } catch (err) {
     res.status(500).send({ message: err.message });
