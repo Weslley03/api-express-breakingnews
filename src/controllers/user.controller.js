@@ -27,7 +27,7 @@ const create = async (req, res) => {
       },
     });
 
-    const token =  await generateToken(user.id)
+    const token = generateToken(user.id)
 
     return token;
 
