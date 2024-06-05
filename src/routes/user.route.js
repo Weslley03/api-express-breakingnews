@@ -1,6 +1,7 @@
 import express from 'express'
 import userController from '../controllers/user.controller.js'
-import{ validId, validUser } from '../middlewares/global.middlewares.js'
+import{ validId} from '../middlewares/global.middlewares.js'
+import{ authMiddleware } from '../middlewares/auth.middlewares.js'
 
 const route = express.Router()
 
