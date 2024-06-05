@@ -5,7 +5,7 @@ export const validId = (req, res, next) => {
   try {
     let id;
   
-    if(req.params.id){
+    if(!req.params.id){
       req.params.id = req.userId;
       id = req.params.id;
     } else {
