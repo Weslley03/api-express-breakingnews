@@ -6,8 +6,8 @@ const route = express.Router()
 
 route.post('/create', userController.create)
 route.get('/', userController.findAll)
-route.get('/findById/:id', validId, validUser, userController.findById)
-route.patch('/findByIdUpdate/:id', validId, validUser, userController.update)
-route.delete('/findByIdDelete/:id', validId, validUser, userController.remove)
+route.get('/findById/:id?', validId, validUser, userController.findById)
+route.patch('/findByIdUpdate/:id?', validId, validUser, userController.update)
+route.delete('/findByIdDelete/:id?', validId, validUser, userController.remove)
 
 export default route
