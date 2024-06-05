@@ -8,15 +8,15 @@ export const authMiddleware = (req, res, next) => {
   try {
     const { authorization } = req.headers;
     if (!authorization) {
-      return res.status(404).send("erro porra, cade a auth");
+      return res.status(404).send("header sem auth");
     }
     const parts = authorization.split(" ");
     const [schema, token] = parts;
     if (parts.length !== 2) {
-      return res.status(404).send("erro porra");
+      return res.status(404).send("token inesxisnte");
     }
     if (schema !== "Bearer") {
-      return res.status(404).send("erro porra, token inesxisnte");
+      return res.status(404).send("token inesxisnte");
     }
 
     jwt.verify(token, process.env.SECRET_JWT, async (err, decoded) => {
