@@ -5,9 +5,13 @@ import{ validId, validUser } from '../middlewares/global.middlewares.js'
 const route = express.Router()
 
 route.post('/create', userController.create)
+
+route.use(authMiddleware)
 route.get('/', userController.findAll)
-route.get('/findById/:id?', validId, userController.findById)
-route.patch('/findByIdUpdate/:id?', validId, userController.update)
-route.delete('/findByIdDelete/:id?', validId, validUser, userController.remove)
+
+route.use(validId)
+route.get('/findById/:id?', userController.findById)
+route.patch('/findByIdUpdate/:id?',  userController.update)
+route.delete('/findByIdDelete/:id?', userController.remove)
 
 export default route
