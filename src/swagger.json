@@ -93,7 +93,7 @@
               }
             }
           },
-          "/users/{id}": {
+          "/users/findById/{id}": {
             "get": {
               "summary": "buscar usuário conforme ID",
               "description": "rota responsável por buscar usuário por id",
@@ -129,7 +129,7 @@
               }
             }
           },
-          "/users/{idU}": {
+          "/users/findByIdUpdate/{idU}": {
             "patch": {
               "summary": "update user por ID",
               "description": "rota responsável por editar o usuário por id",
