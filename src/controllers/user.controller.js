@@ -50,7 +50,7 @@ const findAll = async (req, res) => {
 
 const findById = async (req, res) => {
   try {
-    const user = await userService.GetByIdService(id)
+    const user = await userService.GetByIdService(req.userId)
     res.send(user);
     console.log(user)
     return user;

@@ -16,6 +16,7 @@ export const validId = (req, res, next) => {
       res.status(400).send({ message: "o id não é mongoose." });
     }
 
+    req.userId = id
     next();
   } catch (err) {
     res.status(500).send({ message: err.message });
