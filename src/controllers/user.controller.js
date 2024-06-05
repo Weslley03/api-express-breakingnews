@@ -1,5 +1,6 @@
 import userService from "../services/user.service.js"
 import { generateToken } from "../services/auth.service.js";
+import { GetByIdService } from '../services/user.service.js'
 
 const create = async (req, res) => {
   try {
@@ -50,8 +51,10 @@ const findAll = async (req, res) => {
 
 const findById = async (req, res) => {
   try {
-    const user = req.user;
+    const user = await GetByIdService()
     res.send(user);
+    console.log(user)
+    return user;
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
