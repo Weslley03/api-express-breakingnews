@@ -6,7 +6,7 @@ dotenv.config();
 
 export const authMiddleware = (req, res, next) => {
   try {
-    const { authorization } = req.headers.authorization;
+    const { authorization } = req.headers;
     if (!authorization) {
       return res.status(404).send("header sem auth");
     }
