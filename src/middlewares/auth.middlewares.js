@@ -13,10 +13,10 @@ export const authMiddleware = (req, res, next) => {
     const parts = authorization.split(" ");
     const [schema, token] = parts;
     if (parts.length !== 2) {
-      return res.status(404).send("token inesxisnte");
+      return res.status(404).send("token não em formato 'Bearer xxxxxx'");
     }
     if (schema !== "Bearer") {
-      return res.status(404).send("token inesxisnte");
+      return res.status(404).send("token sem Bearer");
     }
 
     jwt.verify(token, process.env.SECRET_JWT, async (err, decoded) => {
