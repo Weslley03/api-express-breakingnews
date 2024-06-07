@@ -42,7 +42,7 @@ export const findAll = async (req, res) => {
     offset = Number(offset); //onde eu começo 'skip'
 
     if (!limit) {
-      limit = 5;
+      limit = 7;
     }
     if (!offset) {
       offset = 1;
