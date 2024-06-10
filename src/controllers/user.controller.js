@@ -67,7 +67,8 @@ const update = async (req, res) => {
       res.status(400).send({ message: "necessario alterar ao menos um campo" });
     }
 
-    const { id } = req.params.id;
+    let id = req.userId
+    console.log(`o id tá retornando: ${id}`)
 
     await userService.updateService(
       id,
