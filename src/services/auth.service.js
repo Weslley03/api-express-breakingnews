@@ -4,10 +4,10 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv"
 dotenv.config()
 
-const loginService = (email, password) => {
+const loginService = async (email, password) => {
 
     try{
-        const user = User.findOne({email: email}).select('+password')
+        const user = await User.findOne({email: email}).select('+password')
         if(!user){
             return { ok: false, message: 'não foi executar o service de LOGIN' }
         }
