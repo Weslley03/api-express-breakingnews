@@ -13,6 +13,7 @@ import {
   addCommentService,
   removeCommentService
 } from "../services/news.service.js";
+import { Readable } from 'stream'
 
 export const create = async (req, res) => {
   try {
@@ -48,7 +49,6 @@ export const findAll = async (req, res) => {
       offset = 1;
     }
 
-    const news = await findAllService(offset, limit);
     const total = await countNewsService();
     const currentUrl = req.baseUrl;
 
@@ -62,9 +62,36 @@ export const findAll = async (req, res) => {
         ? `${currentUrl}?limi=${limit}?offset=${previous}`
         : null;
 
-    if (news.length === 0) {
+    /*if (news.length === 0) {
       res.status(404).send({ message: "não tem noticia véi" });
-    }
+    } */
+
+    const readable = new Readable({
+      async read(){
+        const news = await findAllService(offset, limit);
+
+        for (const newItem of news){
+          const data = {
+            id: newItem._id,
+            title: newItem.title,
+            text: newItem.text,
+            banner: newItem.banner,
+            likes: newItem.likes,
+            comments: newItem.comments,
+            name: newItem.user.name,
+            userName: newItem.user.username,
+            userAvatar: newItem.user.avatar,
+          };
+          this.push(JSON.stringify(data) + '\n'); 
+        }
+        this.push(null);
+      }
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    readable.pipe(res);
+
+    /*
     res.send({
       nextUrl,
       previousUrl,
@@ -82,11 +109,11 @@ export const findAll = async (req, res) => {
         userName: newItem.user.username,
         userAvatar: newItem.user.avatar,
       })),
-    });
+    });*/
   } catch (err) {
     res.status(500).send({ message: err.message });
-    console.log("foi pro erro");
-  }
+    console.log("foi pro erro", err);
+  } 
 };
 
 export const topNews = async (req, res) => {
