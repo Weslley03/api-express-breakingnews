@@ -10,9 +10,7 @@ import newsRoute from './src/routes/news.route.js'
 import swaggerRoute from './src/routes/swagger.route.js'
 
 const app = express()
-app.use(cors({
-    origin: 'http://localhost:3001/'
-}))
+app.use(cors())
 dotenv.config()
 const port = process.env.PORT || 3000
     
