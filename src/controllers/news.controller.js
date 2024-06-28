@@ -42,12 +42,13 @@ export const findAll = async (req, res) => {
     limit = Number(limit);
     offset = Number(offset); //onde eu começo 'skip'
 
+    
     if (!limit) {
       limit = 6;
     }
     if (!offset) {
       offset = 1;
-    }
+    } 
 
     const total = await countNewsService();
     const currentUrl = req.baseUrl;
@@ -61,10 +62,6 @@ export const findAll = async (req, res) => {
       previous != null
         ? `${currentUrl}?limi=${limit}?offset=${previous}`
         : null;
-
-    /*if (news.length === 0) {
-      res.status(404).send({ message: "não tem noticia véi" });
-    } */
 
     const readable = new Readable({
       async read(){
@@ -118,27 +115,34 @@ export const findAll = async (req, res) => {
 
 export const topNews = async (req, res) => {
   try {
-    const news = await topNewsService();
 
-    if (!news) {
-      res.status(404).send({ message: "você é o problema do sistema" });
-    }
+    const readable = new Readable({
+      async read(){
+        const news = await topNewsService();
 
-    res.send({
-      news: {
-        id: news._id,
-        title: news.title,
-        text: news.text,
-        banner: news.banner,
-        likes: news.likes,
-        comments: news.comments,
-        name: news.user.name,
-        userName: news.user.username,
-        userAvatar: news.user.avatar,
-      },
+        for(const newsItens of news){
+          const data = {
+            id: news._id,
+            title: news.title,
+            text: news.text,
+            banner: news.banner,
+            likes: news.likes,
+            comments: news.comments,
+            name: news.user.name,
+            userName: news.user.username,
+            userAvatar: news.user.avatar,
+          }
+          this.push(JSON.stringify(data) + '\n' )
+        }
+        this.push(null)
+      }
     });
+    
+    res.setHeader('Content-Type', 'application/json')
+    readable.pipe(res)
+
   } catch (err) {
-    res.status(404).send({ message: "você é o problema do sistema" });
+    res.status(404).send({ message: "houve um erro no sistema" });
   }
 };
 
