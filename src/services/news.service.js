@@ -41,14 +41,8 @@ export const findByTitleService = (title) => News.find({
     title: {$regex: `${title || ''}`, $options: 'i'} //$regex vai servir pra especificar os parametros de busco, 'contenha o title'
 }).sort({_id: -1}).populate('user')
 
-export const findAllService = async (offset, limit) => {
-    const news = News.find()
-    .sort({_id: -1})
-    .skip(offset)
-    .limit(limit)
-    .populate('user')
-    .exec()
-    return news
+export const findAllService = (offset, limit) => {
+    return News.find().sort({_id: -1}).skip(offset).limit(limit).populate('user').cursor()
 } 
 /*xxxxx.find()
 .sort({_id: -1}) nesse caso, trás os dados de trás pra frente, conforme criação dos ID (_id)

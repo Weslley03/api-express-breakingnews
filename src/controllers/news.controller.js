@@ -13,7 +13,7 @@ import {
   addCommentService,
   removeCommentService
 } from "../services/news.service.js";
-import { Readable } from 'stream'
+import { Readable } from 'stream';
 
 export const create = async (req, res) => {
   try {
@@ -40,73 +40,67 @@ export const findAll = async (req, res) => {
   try {
     let { limit, offset } = req.query;
     limit = Number(limit);
-    offset = Number(offset); //onde eu começo 'skip'
-
+    offset = Number(offset);
     
-    if (!limit) {
-      limit = 6;
-    }
-    if (!offset) {
-      offset = 1;
-    } 
-
+    if (!limit) limit = 6  
+    if (!offset) offset = 1;
+  
+    const cursor =  findAllService(offset, limit);
     const total = await countNewsService();
     const currentUrl = req.baseUrl;
 
     const next = offset + limit;
-    const nextUrl =
-      next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null;
+    const nextUrl = next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null;
 
     const previous = offset * limit < 0 ? null : offset - limit;
-    const previousUrl =
-      previous != null
-        ? `${currentUrl}?limi=${limit}?offset=${previous}`
-        : null;
+    const previousUrl = previous != null ? `${currentUrl}?limit=${limit}&offset=${previous}` : null;
+    
+    if (!cursor) {
+      res.status(404).send({ message: "não foi encontrado nenhuma noticia" });
+    }
 
-    const readable = new Readable({
-      async read(){
-        const news = await findAllService(offset, limit);
-
-        for (const newItem of news){
-          const data = {
-            id: newItem._id,
-            title: newItem.title,
-            text: newItem.text,
-            banner: newItem.banner,
-            likes: newItem.likes,
-            comments: newItem.comments,
-            name: newItem.user.name,
-            userName: newItem.user.username,
-            userAvatar: newItem.user.avatar,
-          };
-          this.push(JSON.stringify(data) + '\n'); 
-        }
-        this.push(null);
-      }
-    });
-
-    res.setHeader('Content-Type', 'application/json');
-    readable.pipe(res);
-
-    /*
-    res.send({
+    res.setHeader('Content-Type', 'application/json')
+    res.write(JSON.stringify({
       nextUrl,
       previousUrl,
       limit,
       offset,
       total,
-      results: news.map((newItem) => ({
-        id: newItem._id,
-        title: newItem.title,
-        text: newItem.text,
-        banner: newItem.banner,
-        likes: newItem.likes,
-        comments: newItem.comments,
-        name: newItem.user.name,
-        userName: newItem.user.username,
-        userAvatar: newItem.user.avatar,
-      })),
-    });*/
+      results: []
+    }).replace('}', '[').replace('[]', ''));
+
+    const stream = Readable.from(cursor.map(doc => {
+      if(!doc) return null
+      return {
+        id: doc._id,
+        title: doc.title,
+        text: doc.text,
+        banner: doc.banner,
+        likes: doc.likes,
+        comments: doc.comments,
+        name: doc.user.name,
+        userName: doc.user.username,
+        userAvatar: doc.user.avatar,
+      };
+    }).filter(doc => doc !==null));
+
+    let firstchunk = true
+
+    stream.on('data', (chunk) => {
+      if(!firstchunk){
+        res.write(',')
+      }
+      firstchunk = false 
+      res.write(JSON.stringify(chunk))
+    })
+
+    stream.on('end', () =>{
+      res.end(']}')
+    })
+
+    stream.on('error', () => {
+      res.status(500).send({message: err.message})
+    })
   } catch (err) {
     res.status(500).send({ message: err.message });
     console.log("foi pro erro", err);
@@ -115,34 +109,25 @@ export const findAll = async (req, res) => {
 
 export const topNews = async (req, res) => {
   try {
+    if (!news) {
+      res.status(404).send({ message: "tivemos um problema sistema" });
+    }
 
-    const readable = new Readable({
-      async read(){
-        const news = await topNewsService();
-
-        for(const newsItens of news){
-          const data = {
-            id: news._id,
-            title: news.title,
-            text: news.text,
-            banner: news.banner,
-            likes: news.likes,
-            comments: news.comments,
-            name: news.user.name,
-            userName: news.user.username,
-            userAvatar: news.user.avatar,
-          }
-          this.push(JSON.stringify(data) + '\n' )
-        }
-        this.push(null)
-      }
+    res.send({
+      news: {
+        id: news._id,
+        title: news.title,
+        text: news.text,
+        banner: news.banner,
+        likes: news.likes,
+        comments: news.comments,
+        name: news.user.name,
+        userName: news.user.username,
+        userAvatar: news.user.avatar,
+      },
     });
-    
-    res.setHeader('Content-Type', 'application/json')
-    readable.pipe(res)
-
   } catch (err) {
-    res.status(404).send({ message: "houve um erro no sistema" });
+    res.status(404).send({ message: "tivemos um problema sistema" });
   }
 };
 
