@@ -39,50 +39,52 @@ export const findAll = async (req, res) => {
   try {
     let { limit, offset } = req.query;
     limit = Number(limit);
-    offset = Number(offset); //onde eu começo 'skip'
+    offset = Number(offset);
 
-    if (!limit) {
-      limit = 6;
-    }
-    if (!offset) {
-      offset = 1;
-    }
+    if (!limit) limit = 6
+    
+    if (!offset) offset = 1;
+    
 
-    const news = await findAllService(offset, limit);
+    const cursor =  findAllService(offset, limit);
     const total = await countNewsService();
     const currentUrl = req.baseUrl;
 
     const next = offset + limit;
-    const nextUrl =
-      next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null;
+    const nextUrl = next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null;
 
     const previous = offset * limit < 0 ? null : offset - limit;
-    const previousUrl =
-      previous != null
-        ? `${currentUrl}?limi=${limit}?offset=${previous}`
-        : null;
+    const previousUrl = previous != null ? `${currentUrl}?limit=${limit}&offset=${previous}` : null;
 
-    if (news.length === 0) {
-      res.status(404).send({ message: "não tem noticia véi" });
+    if (!cursor) {
+      res.status(404).send({ message: "não foi encontrado nenhuma noticia" });
     }
-    res.send({
+
+    const results = []
+
+    for await (const doc of cursor){
+      results.push({
+        id: doc._id,
+        title: doc.title,
+        text: doc.text,
+        banner: doc.banner,
+        likes: doc.likes,
+        comments: doc.comments,
+        name: doc.user.name,
+        userName: doc.user.username,
+        userAvatar: doc.user.avatar,
+      })
+    }
+
+    res.json({
       nextUrl,
       previousUrl,
       limit,
       offset,
       total,
-      results: news.map((newItem) => ({
-        id: newItem._id,
-        title: newItem.title,
-        text: newItem.text,
-        banner: newItem.banner,
-        likes: newItem.likes,
-        comments: newItem.comments,
-        name: newItem.user.name,
-        userName: newItem.user.username,
-        userAvatar: newItem.user.avatar,
-      })),
-    });
+      results,
+    })
+
   } catch (err) {
     res.status(500).send({ message: err.message });
     console.log("foi pro erro");
@@ -94,7 +96,7 @@ export const topNews = async (req, res) => {
     const news = await topNewsService();
 
     if (!news) {
-      res.status(404).send({ message: "você é o problema do sistema" });
+      res.status(404).send({ message: "tivemos um problema sistema" });
     }
 
     res.send({
@@ -111,7 +113,7 @@ export const topNews = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(404).send({ message: "você é o problema do sistema" });
+    res.status(404).send({ message: "tivemos um problema sistema" });
   }
 };
 
