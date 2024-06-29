@@ -13,6 +13,7 @@ import {
   addCommentService,
   removeCommentService
 } from "../services/news.service.js";
+import { Readable } from 'stream';
 
 export const create = async (req, res) => {
   try {
@@ -60,10 +61,19 @@ export const findAll = async (req, res) => {
       res.status(404).send({ message: "não foi encontrado nenhuma noticia" });
     }
 
-    const results = []
+    res.setHeader('Content-Type', 'application/json')
+    res.write(JSON.stringify({
+      nextUrl,
+      previousUrl,
+      limit,
+      offset,
+      total,
+      results: []
+    }).replace('}', '[').replace('[]', ''));
 
-    for await (const doc of cursor){
-      results.push({
+    const stream = Readable.from(cursor.map(doc => {
+      if(!doc) return null
+      return {
         id: doc._id,
         title: doc.title,
         text: doc.text,
@@ -73,16 +83,25 @@ export const findAll = async (req, res) => {
         name: doc.user.name,
         userName: doc.user.username,
         userAvatar: doc.user.avatar,
-      })
-    }
+      };
+    }).filter(doc => doc !==null));
 
-    res.json({
-      nextUrl,
-      previousUrl,
-      limit,
-      offset,
-      total,
-      results,
+    let firstchunk = true
+
+    stream.on('data', (chunk) => {
+      if(!firstchunk){
+        res.write(',')
+      }
+      firstchunk = false 
+      res.write(JSON.stringify(chunk))
+    })
+
+    stream.on('end', () =>{
+      res.end(']}')
+    })
+
+    stream.on('error', () => {
+      res.status(500).send({message: err.message})
     })
 
   } catch (err) {
