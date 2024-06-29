@@ -41,12 +41,10 @@ export const findAll = async (req, res) => {
     let { limit, offset } = req.query;
     limit = Number(limit);
     offset = Number(offset);
-
-    if (!limit) limit = 6
     
+    if (!limit) limit = 6  
     if (!offset) offset = 1;
-    
-
+  
     const cursor =  findAllService(offset, limit);
     const total = await countNewsService();
     const currentUrl = req.baseUrl;
@@ -56,7 +54,7 @@ export const findAll = async (req, res) => {
 
     const previous = offset * limit < 0 ? null : offset - limit;
     const previousUrl = previous != null ? `${currentUrl}?limit=${limit}&offset=${previous}` : null;
-
+    
     if (!cursor) {
       res.status(404).send({ message: "não foi encontrado nenhuma noticia" });
     }
@@ -103,17 +101,14 @@ export const findAll = async (req, res) => {
     stream.on('error', () => {
       res.status(500).send({message: err.message})
     })
-
   } catch (err) {
     res.status(500).send({ message: err.message });
-    console.log("foi pro erro");
-  }
+    console.log("foi pro erro", err);
+  } 
 };
 
 export const topNews = async (req, res) => {
   try {
-    const news = await topNewsService();
-
     if (!news) {
       res.status(404).send({ message: "tivemos um problema sistema" });
     }

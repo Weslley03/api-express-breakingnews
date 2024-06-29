@@ -1,6 +1,9 @@
 import News from "../models/News.js"
 
-export const countNewsService = () => News.countDocuments()
+export const countNewsService = () => {
+    const count = News.countDocuments().exec();
+    return count;
+} 
 export const createService = (body) => News.create(body); 
 
 export const updateService = (id, title, text, banner) => News.findOneAndUpdate(
