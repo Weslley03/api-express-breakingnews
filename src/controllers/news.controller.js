@@ -109,6 +109,9 @@ export const findAll = async (req, res) => {
 
 export const topNews = async (req, res) => {
   try {
+
+    const news = await topNewsService();
+
     if (!news) {
       res.status(404).send({ message: "tivemos um problema sistema" });
     }
