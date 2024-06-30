@@ -10,7 +10,8 @@ import {
   findByUser,
   likeNews,
   addComment,
-  removeComment
+  removeComment,
+  likecheck
 } from "../controllers/news.controller.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 const route = express.Router();
@@ -20,6 +21,7 @@ route.get("/getall", findAll);
 route.get("/top", topNews);
 route.get("/search", findByTitle);
 route.get("/byUser", authMiddleware, findByUser);
+route.get('/likecheck/:id', authMiddleware, likecheck) 
 route.patch("/comment/:idNews/:commentId", authMiddleware, removeComment);
 route.get("/findId/:id", authMiddleware, findById);
 route.patch("/upadate/:id", authMiddleware, update);

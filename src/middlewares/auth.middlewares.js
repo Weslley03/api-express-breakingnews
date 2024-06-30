@@ -23,14 +23,12 @@ export const authMiddleware = (req, res, next) => {
       if (err) {
         return res.status(401).send({ msg: "tokken invalid" });
       } 
-      console.log(decoded)
       const user = await userService.GetByIdService(decoded.id); //
 
       if (!user || !user.id) {
         return res.status(401).send({ msg: "user or id invalids" });
       }
       req.userId = user.id
-      console.log(`${user.name} logado`)
 
       return next();
     });

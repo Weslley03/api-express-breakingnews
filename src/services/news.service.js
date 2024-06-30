@@ -16,17 +16,26 @@ export const deleteByIdService = (id) => News.findOneAndDelete({_id: id})
 export const topNewsService = () => News.findOne().sort({_id: -1}).populate('user')
 export const findByIdService = (id) => News.findById(id).populate('user')
 export const findByUserService = (userId) => News.find({user: userId}).sort({_id: -1}).sort({_id: -1}).populate('user')
+export const findByIdServiceSimple = async (idNews) => {
+    const news = await News.findById(idNews)
+    return news
+}
 
-export const likeNewsService = (newsId, userLiked) => News.findOneAndUpdate(
-    //vou filtar por id da noticia, no caso esse que vem em parametro
-    {_id: newsId, 'likes.userLiked': {$nin: [userLiked]}}, //dentro da noticia, entrar no campo likes, nesse campo, procurar userLiked
-    //$nin verifica se esse userLiked é o mesmo que [userLiked]
-    {$push: //cifrão alega query e solta query dentro do banco
-        {likes: //vai haver um PUSH dentro do likes, criamos esse no model Newss
-            {userLiked, created: new Date()} //dentro de likes vamos colocar o id do usuario q curtiu e a data que curtiu
+export const likeNewsService = async (newsId, userLiked) => {
+    const likedOk = await News.findOneAndUpdate(
+        {_id: newsId, 'likes.userLiked': {$nin: [userLiked]}},
+        {$push: 
+            {likes: 
+                {userLiked, created: new Date()} 
+            }
         }
+    )
+
+    if(!likedOk){
+        return {ok: false}
     }
-)
+    return {ok: true}
+} 
 
 export const deleteLikeNewsService = (newId, userLiked) => News.findOneAndUpdate(
     {_id: newId},
