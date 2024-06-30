@@ -11,7 +11,8 @@ import {
   likeNewsService,
   deleteLikeNewsService,
   addCommentService,
-  removeCommentService
+  removeCommentService,
+  findByIdServiceSimple
 } from "../services/news.service.js";
 import { Readable } from 'stream';
 
@@ -270,22 +271,39 @@ export const deleteById = async (req, res) => {
 export const likeNews = async (req, res) => {
   try {
     const newId = req.params.id;
-    console.log('newId: ', newId)
     const userLiked = req.userId;
-    console.log('userLiked: ', userLiked)
     const { ok } = await likeNewsService(newId, userLiked);
 
     if (ok === false) {
       await deleteLikeNewsService(newId, userLiked);
       return res.status(200).send({ msg: `post DESCURTIDO com sucesso` });
     }
-    console.log(ok)
+
     return res.status(200).json({ msg: `post CURTIDO com sucesso` });
   } catch (err) {
     console.error("error", err); 
     return res.status(500).send({ msg: `error: ${err.message}` });
   }
 };
+
+export const likecheck = async (req, res) => {
+  try{
+    const newId = req.params.id
+    const news = await findByIdServiceSimple(newId)
+    if(!news){
+      return res.status(404).send({ message: "não possivel achar a noticia" })
+    }
+
+    const liked = news.likes
+    if(!liked){
+      return res.status(404).send({ message: "houve um problema no sistema" });
+    }
+
+    return res.send({liked});
+  }catch(err){
+    
+  }
+}
 
 export const addComment = async (req, res) => {
   try {

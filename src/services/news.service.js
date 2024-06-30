@@ -16,6 +16,10 @@ export const deleteByIdService = (id) => News.findOneAndDelete({_id: id})
 export const topNewsService = () => News.findOne().sort({_id: -1}).populate('user')
 export const findByIdService = (id) => News.findById(id).populate('user')
 export const findByUserService = (userId) => News.find({user: userId}).sort({_id: -1}).sort({_id: -1}).populate('user')
+export const findByIdServiceSimple = async (idNews) => {
+    const news = await News.findById(idNews)
+    return news
+}
 
 export const likeNewsService = async (newsId, userLiked) => {
     const likedOk = await News.findOneAndUpdate(
