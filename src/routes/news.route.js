@@ -10,7 +10,7 @@ import {
   findByUser,
   likeNews,
   addComment,
-  removeComment
+  removeComment 
 } from "../controllers/news.controller.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 const route = express.Router();

@@ -270,17 +270,19 @@ export const deleteById = async (req, res) => {
 export const likeNews = async (req, res) => {
   try {
     const newId = req.params.id;
+    console.log('newId: ', newId)
     const userLiked = req.userId;
-    const newsLiked = await likeNewsService(newId, userLiked);
+    console.log('userLiked: ', userLiked)
+    const { ok } = await likeNewsService(newId, userLiked);
 
-    if (!newsLiked) {
+    if (ok === false) {
       await deleteLikeNewsService(newId, userLiked);
       return res.status(200).send({ msg: `post DESCURTIDO com sucesso` });
     }
-
-    res.status(200).send({ msg: `post CURTIDO com sucesso` });
+    console.log(ok)
+    return res.status(200).json({ msg: `post CURTIDO com sucesso` });
   } catch (err) {
-    console.error("error", err); // Log do erro para depuração
+    console.error("error", err); 
     return res.status(500).send({ msg: `error: ${err.message}` });
   }
 };
