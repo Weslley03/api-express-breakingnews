@@ -2,6 +2,11 @@ import express from 'express'
 import connetcDatabase from './src/database/db.js'
 import dotenv from "dotenv" //chama a blibioteca
 import cors from 'cors'
+import bodyParser from 'body-parser'
+
+const app = express()
+app.use(bodyParser.json({ limit: '50mb' }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 
 //import de toda rota do programa
 import userRoute from './src/routes/user.route.js'
@@ -9,8 +14,8 @@ import authRoute from './src/routes/auth.route.js'
 import newsRoute from './src/routes/news.route.js'
 import swaggerRoute from './src/routes/swagger.route.js'
 
-const app = express()
-app.use(cors({ origin: '*' }))
+
+app.use(cors())
 dotenv.config()
 const port = process.env.PORT || 3000
     

@@ -187,7 +187,6 @@ export const findByTitle = async (req, res) => {
 export const findByUser = async (req, res) => {
   try {
     const userId = req.userId;
-    console.log(userId);
     const news = await findByUserService(userId);
     if (!news) {
       res.status(404).send({ message: "você é o problema do sistema" });
