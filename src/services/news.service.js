@@ -4,7 +4,7 @@ export const countNewsService = () => {
     const count = News.countDocuments().exec();
     return count;
 } 
-export const createService = (body) => News.create(body); 
+export const createService = async (body) => await News.create(body); 
 
 export const updateService = (id, title, text, banner) => News.findOneAndUpdate(
     { _id: id }, 
