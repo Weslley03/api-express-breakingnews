@@ -14,6 +14,7 @@ import authRoute from './src/routes/auth.route.js'
 import newsRoute from './src/routes/news.route.js'
 import swaggerRoute from './src/routes/swagger.route.js'
 
+
 app.use(cors())
 dotenv.config()
 const port = process.env.PORT || 3000
