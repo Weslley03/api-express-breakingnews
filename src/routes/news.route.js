@@ -11,7 +11,8 @@ import {
   likeNews,
   addComment,
   removeComment,
-  likecheck
+  likecheck,
+  commentByIdNews
 } from "../controllers/news.controller.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 const route = express.Router();
@@ -21,6 +22,7 @@ route.get("/getall", findAll);
 route.get("/top", topNews);
 route.get("/search", findByTitle);
 route.get("/byUser", authMiddleware, findByUser);
+route.get('/comment/commentbyidnews/:id', commentByIdNews)
 route.get('/likecheck/:id', authMiddleware, likecheck) 
 route.patch("/comment/:idNews/:commentId", authMiddleware, removeComment);
 route.get("/findId/:id", authMiddleware, findById);
