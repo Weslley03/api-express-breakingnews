@@ -80,7 +80,7 @@ export const findAll = async (req, res) => {
         banner: doc.banner,
         likes: doc.likes,
         comments: doc.comments,
-        name: doc.user.name,
+        //name: doc.user.name,
         userName: doc.user.username,
         userAvatar: doc.user.avatar,
       };
