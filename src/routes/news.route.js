@@ -26,6 +26,7 @@ route.get('/comment/commentbyidnews/:id', commentByIdNews)
 route.get('/likecheck/:id', authMiddleware, likecheck) 
 route.patch("/comment/:idNews/:commentId", authMiddleware, removeComment);
 route.get("/findId/:id", authMiddleware, findById);
+route.get("/findnewsidsimple/:id", findById); //
 route.patch("/upadate/:id", authMiddleware, update);
 route.delete("/:id", authMiddleware, deleteById);
 route.patch("/like/:id", authMiddleware, likeNews);
