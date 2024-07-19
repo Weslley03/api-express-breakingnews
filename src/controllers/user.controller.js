@@ -50,10 +50,17 @@ const findAll = async (req, res) => {
 
 const findById = async (req, res) => {
   try {
-    const user = await userService.GetByIdService(req.userId)
-    res.send(user);
-    console.log(user)
-    return user;
+    const id = req.params.id
+    
+    if(!req.params.id){
+      const user = await userService.GetByIdService(req.userId)
+      res.send(user)
+      return user
+    } else{
+      const user = await userService.GetByIdService(id)
+      res.send(user)
+      return user
+    }
   } catch (err) {
     res.status(500).send({ message: err.message });
   }

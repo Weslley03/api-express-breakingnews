@@ -12,6 +12,7 @@ export const updateService = (id, title, text, banner) => News.findOneAndUpdate(
     { rawResult: true }
 ) 
 
+export const findCommentsByIdNews = async (id) => await News.findById(id).populate('comments')
 export const deleteByIdService = (id) => News.findOneAndDelete({_id: id}) 
 export const topNewsService = () => News.findOne().sort({_id: -1}).populate('user')
 export const findByIdService = async (id) => await News.findById(id).populate('user')

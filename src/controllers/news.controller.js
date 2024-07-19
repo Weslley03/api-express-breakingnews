@@ -12,7 +12,8 @@ import {
   deleteLikeNewsService,
   addCommentService,
   removeCommentService,
-  findByIdServiceSimple
+  findByIdServiceSimple,
+  findCommentsByIdNews
 } from "../services/news.service.js";
 import { Readable } from 'stream';
 
@@ -140,7 +141,7 @@ export const findById = async (req, res) => {
     const id = req.params.id;
     const noticia = await findByIdService(id);
     if (!noticia) {
-      return res.status(404).send({ message: "essa noticia nãõ existe" });
+      return res.status(404).send({ message: "essa noticia não existe" });
     }
     res.status(200).send({
       noticia: {
@@ -346,5 +347,24 @@ export const removeComment = async (req, res) => {
   }catch(err) {
     console.error("error", err); // Log do erro para depuração
     return res.status(404).send({ msg: `houve um erro, caiu no catch: ${err.message}` }); 
+  }
+}
+
+export const commentByIdNews = async (req, res) => {
+  try {
+    const idNews = req.params.id 
+    
+    const news = await findCommentsByIdNews(idNews)
+    if (!news) {
+      return res.status(404).send({ message: "essa noticia não existe" });
+    }
+
+    res.status(200).send({
+      news: {
+        comments: news.comments,
+      },
+    });
+  } catch (err) {
+    res.status(404).send({ message: "não foi possivel encontrar esse comentario", err });
   }
 }

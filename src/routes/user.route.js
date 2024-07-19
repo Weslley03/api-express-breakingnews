@@ -6,6 +6,7 @@ import{ authMiddleware } from '../middlewares/auth.middlewares.js'
 const route = express.Router()
 
 route.post('/create', userController.create)
+route.get('/findbyidsimple/:id?', userController.findById)
 
 route.use(authMiddleware)
 route.get('/', userController.findAll)
