@@ -34,7 +34,7 @@ export const create = async (req, res) => {
     res.send("criação de post");
   } catch (err) {
     res.status(500).send({ message: err.message });
-    console.log("foi pro erro");
+    console.error("foi pro erro");
   }
 };
 
@@ -105,7 +105,7 @@ export const findAll = async (req, res) => {
     })
   } catch (err) {
     res.status(500).send({ message: err.message });
-    console.log("foi pro erro", err);
+    console.error("foi pro erro", err);
   } 
 };
 
@@ -164,8 +164,7 @@ export const findById = async (req, res) => {
 export const findByTitle = async (req, res) => {
   try {
     const { title } = req.query;
-    const news = await findByTitleService(title);
-    console.log(news.name);
+    const news = await findByTitleService(title)
 
     res.status(200).send(
       news.map((newItem) => ({
@@ -231,10 +230,6 @@ export const update = async (req, res) => {
         .status(404)
         .send({ msg: "você não tem permissão para mudar essa noticia" });
     }
-
-    console.log(news.user._id);
-    console.log(userId);
-    console.log(title, text, banner);
 
     await updateService(newsId, title, text, banner);
     return res.status(200).send({ msg: "noticia atualizada com sucesso" });
