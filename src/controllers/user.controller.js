@@ -75,7 +75,6 @@ const update = async (req, res) => {
     }
 
     let id = req.userId
-    console.log(`o id tá retornando: ${id}`)
 
     await userService.updateService(
       id,
