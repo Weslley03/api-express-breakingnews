@@ -41,24 +41,22 @@ export const create = async (req, res) => {
 export const findAll = async (req, res) => {
   try {
     let { limit, offset } = req.query;
-    limit = Number(limit);
-    offset = Number(offset);
-    
-    if (!limit) limit = 6  
-    if (!offset) offset = 1;
+
+    limit = Number(limit) || 6
+    offset = Number(offset) || 1
   
     const cursor =  findAllService(offset, limit);
     const total = await countNewsService();
-    const currentUrl = req.baseUrl;
+    const currentUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}`
 
     const next = offset + limit;
-    const nextUrl = next < total ? `${currentUrl}?limi=${limit}?offset=${next}` : null;
+    const nextUrl = next < total ? `${currentUrl}/getall?limit=${limit}&offset=${next}` : null
 
-    const previous = offset * limit < 0 ? null : offset - limit;
-    const previousUrl = previous != null ? `${currentUrl}?limit=${limit}&offset=${previous}` : null;
+    const previous = offset - limit < 0 ? null : offset - limit
+    const previousUrl = previous !== null ? `${currentUrl}/getall?limit=${limit}&offset=${previous}` : null
     
     if (!cursor) {
-      res.status(404).send({ message: "não foi encontrado nenhuma noticia" });
+      res.status(404).send({ message: "não foi encontrado nenhuma noticia" })
     }
 
     res.setHeader('Content-Type', 'application/json')
