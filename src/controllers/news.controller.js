@@ -20,9 +20,7 @@ import { Readable } from 'stream';
 export const create = async (req, res) => {
   try {
     const { title, text, banner } = req.body;
-    if (!title || !text || !banner) {
-      res.status(500).send({ message: "existem dados faltantes" });
-    }
+    if (!title || !text || !banner) res.status(500).send({ message: "existem dados faltantes" });
 
     await createService({
       title,
@@ -31,10 +29,10 @@ export const create = async (req, res) => {
       user: req.userId,
     });
 
-    res.send("criação de post");
+    res.send("news criada com sucesso");
   } catch (err) {
     res.status(500).send({ message: err.message });
-    console.error("foi pro erro");
+    console.error("não foi possivel efetuar a criação da noticia");
   }
 };
 
@@ -103,18 +101,15 @@ export const findAll = async (req, res) => {
     })
   } catch (err) {
     res.status(500).send({ message: err.message });
-    console.error("foi pro erro", err);
+    console.error("não foi possivel efetuar a busca das NEWS", err);
   } 
 };
 
 export const topNews = async (req, res) => {
   try {
-
     const news = await topNewsService();
 
-    if (!news) {
-      res.status(404).send({ message: "tivemos um problema sistema" });
-    }
+    if (!news) res.status(404).send({ message: "tivemos um problema sistema" });
 
     res.send({
       news: {
@@ -130,7 +125,7 @@ export const topNews = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(404).send({ message: "tivemos um problema sistema" });
+    res.status(404).send({ message: "não foi possivel bucar a TOPNEWS" });
   }
 };
 
@@ -138,9 +133,8 @@ export const findById = async (req, res) => {
   try {
     const id = req.params.id;
     const noticia = await findByIdService(id);
-    if (!noticia) {
-      return res.status(404).send({ message: "essa noticia não existe" });
-    }
+    if (!noticia) res.status(404).send({ message: "essa noticia não existe" })
+
     res.status(200).send({
       noticia: {
         id: noticia._id,
@@ -155,7 +149,7 @@ export const findById = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(404).send({ message: "você é o problema do sistema" });
+    res.status(404).send({ message: `não foi possivel buscar a noticia por ID ${id}`});
   }
 };
 
@@ -178,7 +172,7 @@ export const findByTitle = async (req, res) => {
       }))
     );
   } catch (err) {
-    res.status(404).send({ message: "você é o problema do sistema" });
+    res.status(404).send({ message: `não foi possivel buscar a noticia por TITLE: ${title}` });
   }
 };
 
@@ -187,7 +181,7 @@ export const findByUser = async (req, res) => {
     const userId = req.userId;
     const news = await findByUserService(userId);
     if (!news) {
-      res.status(404).send({ message: "você é o problema do sistema" });
+      res.status(404).send({ message: "findByUserNews quebrou em erro" });
     } else {
       res.status(200).send(
         news.map((newItem) => ({
@@ -204,7 +198,7 @@ export const findByUser = async (req, res) => {
       );
     }
   } catch (err) {
-    res.status(404).send({ message: "você é o problema do sistema" });
+    res.status(404).send({ message: "não foi possivel executar a função findByUserNews"});
   }
 };
 
@@ -214,14 +208,10 @@ export const update = async (req, res) => {
     const newsId = req.params.id;
     const { title, text, banner } = req.body;
 
-    if (!title && !text && !banner) {
-      res.status(500).send({ message: "existem dados faltantes" });
-    }
+    if (!title && !text && !banner) res.status(500).send({ message: "existem dados faltantes" });
 
     const news = await findByIdService(newsId);
-    if (!news) {
-      return res.status(404).send({ msg: "Notícia não encontrada" });
-    }
+    if (!news) res.status(404).send({ msg: "Notícia não encontrada" });
 
     if (news.user._id != userId) {
       return res
@@ -232,10 +222,10 @@ export const update = async (req, res) => {
     await updateService(newsId, title, text, banner);
     return res.status(200).send({ msg: "noticia atualizada com sucesso" });
   } catch (err) {
-    console.error("Erro ao atualizar notícia:", err); // Log do erro para depuração
+    console.error("erro ao atualizar notícia:", err);
     return res
       .status(500)
-      .send({ msg: `Erro ao atualizar notícia: ${err.message}` });
+      .send({ msg: `erro ao atualizar notícia: ${err.message}` });
   }
 };
 
@@ -254,7 +244,7 @@ export const deleteById = async (req, res) => {
     await deleteByIdService(newsId);
     res.send({ msg: "noticia excluído com sucesso" });
   } catch (err) {
-    console.error("erro ao EXCLUIR essa notícia:", err); // Log do erro para depuração
+    console.error("erro ao EXCLUIR essa notícia:", err);
     return res
       .status(500)
       .send({ msg: `erro ao EXCLUIR notícia: ${err.message}` });
@@ -283,18 +273,14 @@ export const likecheck = async (req, res) => {
   try{
     const newId = req.params.id
     const news = await findByIdServiceSimple(newId)
-    if(!news){
-      return res.status(404).send({ message: "não possivel achar a noticia" })
-    }
+    if(!news) res.status(404).send({ message: "não possivel encontrar essa noticia"})
 
     const liked = news.likes
-    if(!liked){
-      return res.status(404).send({ message: "houve um problema no sistema" });
-    }
+    if(!liked) res.status(404).send({ message: "não foi possivel puxar quantidade de likes"});
 
     return res.send({liked});
   }catch(err){
-    
+    console.error('não foi possivel executar função de verificação "likecheck" ' + err)
   }
 }
 
@@ -304,14 +290,12 @@ export const addComment = async (req, res) => {
     const newsId = req.params.id;
     const { comment } = req.body;
 
-    if (!comment) {
-      res.status(400).send({ msg: "existem dados faltantes" });
-    }
+    if (!comment) res.status(400).send({ msg: "existem dados faltantes" });
 
     await addCommentService(newsId, comment, userId);
     res.send({msg: 'comentario add'})
   } catch (err) {
-    console.error("error", err); // Log do erro para depuração
+    console.error("error", err);
     return res.status(500).send({ msg: `error: ${err.message}` });  
   }
 };
@@ -332,14 +316,12 @@ export const removeComment = async (req, res) => {
       return res.status(404).send({ msg: `o comment não foi encontrado`});
     }
 
-    if(commentFind.userId !== userId){
-      return res.status(404).send({ msg: `você não pode remover esse comentario`});
-    }
+    if(commentFind.userId !== userId) res.status(404).send({ msg: `você não pode remover esse comentario`});
 
     res.status(200).send({ msg: `comment removido com sucesso`});
   }catch(err) {
-    console.error("error", err); // Log do erro para depuração
-    return res.status(404).send({ msg: `houve um erro, caiu no catch: ${err.message}` }); 
+    console.error("error", err); 
+    return res.status(404).send({ msg: `houve um erro, caiu no catch "removeComment": ${err.message}` }); 
   }
 }
 
@@ -348,9 +330,7 @@ export const commentByIdNews = async (req, res) => {
     const idNews = req.params.id 
     
     const news = await findCommentsByIdNews(idNews)
-    if (!news) {
-      return res.status(404).send({ message: "essa noticia não existe" });
-    }
+    if (!news) res.status(404).send({ message: "essa noticia até então não existe" });
 
     res.status(200).send({
       news: {
